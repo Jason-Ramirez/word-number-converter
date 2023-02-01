@@ -9,54 +9,55 @@ class Word extends Model
 {
     use HasFactory;
 
+    const BASE_10 = [
+        'hundred' => 100,
+        'thousand' => 1000,
+        'million' => 1000000,
+        'billion' => 1000000000,
+        'trillion' => 1000000000000,
+        'quadrillion' => 1000000000000000,
+        'quintrillion' => 1000000000000000000,
+        'sextillion' => 1000000000000000000000,
+    ];
+
+    const NUMBERS = [
+        'zero' => 0,
+        'one' => 1,
+        'two' => 2,
+        'three' => 3,
+        'four' => 4,
+        'five' => 5,
+        'six' => 6,
+        'seven' => 7,
+        'eight' => 8,
+        'nine' => 9,
+        'ten' => 10,
+        'eleven' => 11,
+        'twelve' => 12,
+        'thirteen' => 13,
+        'fourteen' => 14,
+        'fifteen' => 15,
+        'sixteen' => 16,
+        'seventeen' => 17,
+        'eighteen' => 18,
+        'nineteen' => 19,
+        'twenty' => 20,
+        'thirty' => 30,
+        'forty' => 40,
+        'fifty' => 50,
+        'sixty' => 60,
+        'seventy' => 70,
+        'eighty' => 80,
+        'ninety' => 90,
+    ] + self::BASE_10;
+    
     public static function toNumber($input)
     {
-
-        $base_10 = [
-            'hundred' => 100,
-            'thousand' => 1000,
-            'million' => 1000000,
-            'billion' => 1000000000,
-            'trillion' => 1000000000000,
-            'quadrillion' => 1000000000000000,
-            'quintrillion' => 1000000000000000000,
-            'sextillion' => 1000000000000000000000
-        ];
-        
-        $number_words = [
-            'zero' => 0,
-            'one' => 1,
-            'two' => 2,
-            'three' => 3,
-            'four' => 4,
-            'five' => 5,
-            'six' => 6,
-            'seven' => 7,
-            'eight' => 8,
-            'nine' => 9,
-            'ten' => 10,
-            'eleven' => 11,
-            'twelve' => 12,
-            'thirteen' => 13,
-            'fourteen' => 14,
-            'fifteen' => 15,
-            'sixteen' => 16,
-            'seventeen' => 17,
-            'eighteen' => 18,
-            'nineteen' => 19,
-            'twenty' => 20,
-            'thirty' => 30,
-            'forty' => 40,
-            'fifty' => 50,
-            'sixty' => 60,
-            'seventy' => 70,
-            'eighty' => 80,
-            'ninety' => 90,
-        ] + $base_10;
-
-        $and_removed = str_replace(' and ', ' ', strtolower($input));
-        $dashes_removed = str_replace('-', ' ', strtolower($and_removed));
-        $cleaned = preg_replace('/[^A-Za-z0-9\ ]/', '', $dashes_removed); 
+        $base_10 = self::BASE_10;
+        $number_words = self::NUMBERS;
+        $and_space = str_replace(' and ', ' ', strtolower($input));
+        $dash_space = str_replace('-', ' ', strtolower($and_space));
+        $cleaned = preg_replace('/[^A-Za-z0-9\ ]/', '', $dash_space); 
         $words = explode(' ', strtolower($cleaned));
         $result = [0];
         $digits = 0;
