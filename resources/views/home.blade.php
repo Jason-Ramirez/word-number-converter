@@ -15,7 +15,7 @@
     <div class="flex justify-center pt-20">
         <form action="/" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="block">
+            <div class="flex flex-col justify-center items-center">
                 <input 
                     type="text"
                     class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400"
@@ -26,8 +26,9 @@
                     Submit
                 </button>
 
-                <div class="mt-20 h-40 bg-gray-200 flex justify-center items-center">
-                    <span>{{ dd($converted_data ?? null) }}</span>
+                <div class="mt-20 p-10 h-40 bg-gray-200 flex flex-col justify-center items-center space-y-14">
+                    <div>{{ $data ?? null }}</div>
+                    <div>{{ $converted_data ?? null }}</div>
                 </div>
                 
             </div>

@@ -11,6 +11,7 @@ class Word extends Model
 
     public static function toNumber($input)
     {
+
         $base_10 = [
             'hundred' => 100,
             'thousand' => 1000,
@@ -22,7 +23,7 @@ class Word extends Model
             'sextillion' => 1000000000000000000000
         ];
         
-        $numberWords = [
+        $number_words = [
             'zero' => 0,
             'one' => 1,
             'two' => 2,
@@ -53,155 +54,28 @@ class Word extends Model
             'ninety' => 90,
         ] + $base_10;
 
-        
-
-
-
-        // @remind clear
-        // $dashes_removed = str_replace("-", " ", strtolower($word));
-        // $words = explode(" ", strtolower($dashes_removed));
-        // $result = 0;
-        // $temp = 100;
-        // // foreach ($words as $word) {
-        // //     if (!array_key_exists($word, $numberWords)) {
-        // //         return "Invalid input";
-        // //     }
-        // //     if ($numberWords[$word] > 99) {
-        // //         if ($temp > 0) {
-        // //             $result += $temp * $numberWords[$word];
-        // //             $temp = 0;
-        // //         } else {
-        // //             $result = $result * $numberWords[$word];
-        // //         }
-        // //     } else {
-        // //         $temp += $numberWords[$word];
-        // //     }
-        // // }
-        // // return $result + $temp;
-        // $digits = 0;
-        
-        // foreach ($words as $word) {
-        //     if (!array_key_exists($word, $numberWords)) return "Invalid input";
-        //     $number = $numberWords[$word];
-        //     if ($number < $temp) {
-        //         $digits += $number;
-        //     } else {
-        //         // $digits *= $number;
-        //         // $result += $digits;
-
-        //         $x = ($digits === 0 ? 1 : $digits) * $number;
-        //         if ($x > $result) {
-        //             $result = (($result + $digits) * $number);
-                    
-        //         }
-        //         else {
-        //             $result += $x;
-        //         }
-                
-        //         $digits = 0;
-        //     }
-        // }
-        // return $result + $digits;
-
-
-        // $dashes_removed = str_replace("-", " ", strtolower($input));
-        // $words = explode(" ", strtolower($dashes_removed));
-        // $result = 0;
-        // $temp = 100;
-        // $digits = 0;
-        // $recursion = function ($index = 0) 
-        //                 use (
-        //                     $numberWords, 
-        //                     $words,
-        //                     $result,
-        //                     $temp,
-        //                     $digits
-        //                 ) {
-            
-        //     // foreach ($words as $word) {
-        //     //     if (!array_key_exists($word, $numberWords)) return "Invalid input";
-        //     //     $number = $numberWords[$word];
-        //     //     if ($number < $temp) {
-        //     //         $digits += $number;
-        //     //     } else {
-        //     //         $x = ($digits === 0 ? 1 : $digits) * $number;
-        //     //         if ($x > $result) {
-        //     //             $result = (($result + $digits) * $number);
-        //     //         }
-        //     //         else {
-        //     //             $result += $x;
-        //     //         }
-                    
-        //     //         $digits = 0;
-        //     //     }
-        //     // }
-
-
-        //     if (!array_key_exists($word, $numberWords)) return "Invalid input";
-        //     $number = $numberWords[$word];
-        //     if ($number < $temp) {
-        //         $digits += $number;
-
-        //         return $recursion($index);
-        //     } else {
-        //         $x = ($digits === 0 ? 1 : $digits) * $number;
-        //         if ($x > $result) {
-        //             $result = (($result + $digits) * $number);
-        //         }
-        //         else {
-        //             $result += $x;
-        //         }
-                
-        //         $digits = 0;
-                
-        //         return $recursion($index);
-        //     }
-
-        //     return $result + $digits;
-        // };
-
-        // return $recursion(4);
-
-
-
-
-
-
-
-
-
-
-        $dashes_removed = str_replace("-", " ", strtolower($input));
-        $words = explode(" ", strtolower($dashes_removed));
+        $and_removed = str_replace(' and ', ' ', strtolower($input));
+        $dashes_removed = str_replace('-', ' ', strtolower($and_removed));
+        $cleaned = preg_replace('/[^A-Za-z0-9\ ]/', '', $dashes_removed); 
+        $words = explode(' ', strtolower($cleaned));
         $result = [0];
-        $temp = 100;
-        // foreach ($words as $word) { @remind clear
-        //     if (!array_key_exists($word, $numberWords)) {
-        //         return "Invalid input";
-        //     }
-        //     if ($numberWords[$word] > 99) {
-        //         if ($temp > 0) {
-        //             $result += $temp * $numberWords[$word];
-        //             $temp = 0;
-        //         } else {
-        //             $result = $result * $numberWords[$word];
-        //         }
-        //     } else {
-        //         $temp += $numberWords[$word];
-        //     }
-        // }
-        // return $result + $temp;
         $digits = 0;
-        $cur_digit = 0;
+        $digit_size = 0;
 
         foreach ($words as $word) {
-            if (!array_key_exists($word, $numberWords)) return "Bad input";
-            $number = $numberWords[$word];
+            if (!array_key_exists($word, $number_words)) return "Bad input: $cleaned";
+            $number = $number_words[$word];
             if (array_key_exists($word, $base_10)) {
                 $digits *= $number;
-                if ((($cur_digit === 0) || ($cur_digit === $number)) && ($number !== 100)) {
+                if (
+                    (
+                        ($digit_size === 0) || 
+                        ($digit_size === $number)
+                    ) && 
+                    ($number !== 100)
+                ) {
                     array_push($result, $digits);
-                    $cur_digit = $number > 1000 ? $number / 1000 : $number / 10;
+                    $digit_size /= $number > 1000 ? 1000 : 10;
                     $digits = 0;
                 }
             } else {
@@ -212,6 +86,5 @@ class Word extends Model
         return array_sum($result);
 
     }
-
 
 }

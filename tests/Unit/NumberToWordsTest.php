@@ -3,9 +3,9 @@
 namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use App\Models\Word;
+use App\Models\Number;
 
-class WordsToNumberTest extends TestCase
+class NumberToWordsTest extends TestCase
 {
     /**
      * A basic unit test example.
@@ -183,17 +183,21 @@ class WordsToNumberTest extends TestCase
             10000 => 'ten thousand',
             100000 => 'one hundred thousand',
             146771 => 'one hundred forty-six thousand seven hundred seventy-one',
-            134558 => 'one hundred thirty four thousand five hundred fifty eight',
+            134558 => 'one hundred thirty-four thousand five hundred fifty-eight',
             97864536267 => 'ninety-seven billion eight hundred sixty-four million five hundred thirty-six thousand two hundred sixty-seven',
             856749830565659 => 'eight hundred fifty-six trillion seven hundred forty-nine billion eight hundred thirty million five hundred sixty-five thousand six hundred fifty-nine',
             9534534589895676 => 'nine quadrillion five hundred thirty-four trillion five hundred thirty-four billion five hundred eighty-nine million eight hundred ninety-five thousand six hundred seventy-six',  
         ];
 
         foreach ($data_set as $number => $word) {
-            $result = Word::toNumber($word);
-            if ($result !== $number) $this->assertTrue(false);
-        }
+            $result = Number::toWords($number);
+            $result = str_replace(' and ', ' ', $result); // added this only for test data
 
+            error_log($result);
+
+            if ($result !== $word) $this->assertTrue(false);
+        }
+        
         $this->assertTrue(true);
     }
 }
