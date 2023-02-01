@@ -60,12 +60,12 @@ class Number extends Model
         $quadrillion = self::QUADRILLION;
         $quintrillion = self::QUINTRILLION;
 
-        $concat_words = function ($digit = null, $place = 'hundred') use ($number, $words) {
+        $concat_words = function ($digit = null, $place = 'hundred', $delimiter = ' and ') use ($number, $words) {
             $_digit = 100;
             if (!empty($digit)) $_digit = $digit / 1000;
             $data = self::toWords($number % $_digit);
             if ($data === 'zero') $data = null;
-            if (!empty($data)) $data = ' and ' . $data;
+            if (!empty($data)) $data = $delimiter . $data;
             return (
                     empty($digit) 
                         ? $words[floor($number / 100)] 
@@ -81,12 +81,49 @@ class Number extends Model
             if (!empty($data)) $data = '-' . $data;
             return $words[10 * floor($number / 10)] . $data ;
         } elseif ($number < $thousand) return $concat_words();
-        elseif ($number < $million) return $concat_words($million, 'thousand');
-        elseif ($number < $billion) return $concat_words($billion, 'million');
-        elseif ($number < $trillion) return $concat_words($trillion, 'billion');
-        elseif ($number < $quadrillion) return $concat_words($quadrillion, 'trillion');
-        elseif ($number < $quintrillion) return $concat_words($quintrillion, 'quadrillion');
+        elseif ($number < $million) return $concat_words($million, 'thousand', ', ');
+        elseif ($number < $billion) return $concat_words($billion, 'million', ', ');
+        elseif ($number < $trillion) return $concat_words($trillion, 'billion', ', ');
+        elseif ($number < $quadrillion) return $concat_words($quadrillion, 'trillion', ', ');
+        elseif ($number < $quintrillion) return $concat_words($quintrillion, 'quadrillion', ', ');
         else return 'Invalid Input.';
+
+        // elseif ($number < $thousand) { // @remind clear
+        //     $data = self::toWords($number % 100);
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ' and ' . $data;
+        //     return $words[floor($number / 100)] . ' hundred' . $data;
+        // } elseif ($number < $million) {
+        //     $data = self::toWords($number % ($million / $thousand));
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ', ' . $data;
+        //     return self::toWords(floor($number / ($million / $thousand))) . ' thousand' . $data;
+        // } elseif ($number < $billion) {
+        //     $data = self::toWords($number % ($billion / $thousand));
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ', ' . $data;
+        //     return self::toWords(floor($number / ($billion / $thousand))) . ' million' . $data;
+        // } elseif ($number < $trillion) {
+        //     $data = self::toWords($number % ($trillion / $thousand));
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ', ' . $data;
+        //     return self::toWords(floor($number / ($trillion / $thousand))) . ' billion' . $data;
+        // } elseif ($number < $quadrillion) {
+        //     $data = self::toWords($number % ($quadrillion / $thousand));
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ', ' . $data;
+        //     return self::toWords(floor($number / ($quadrillion / $thousand))) . ' trillion' . $data;
+        // } elseif ($number < $quintrillion) {
+        //     $data = self::toWords($number % ($quintrillion / $thousand));
+        //     if ($data === 'zero') $data = null;
+        //     if (!empty($data)) $data = ', ' . $data;
+        //     return self::toWords(floor($number / ($quintrillion / $thousand))) . ' quadrillion' . $data;
+        // } else null;
+        
     }
-    
+
+    public static function formatNumberWithCommas($number) {
+        return number_format($number, 2, '.', ',');
+    }
+
 }

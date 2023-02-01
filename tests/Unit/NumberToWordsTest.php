@@ -192,6 +192,8 @@ class NumberToWordsTest extends TestCase
         foreach ($data_set as $number => $word) {
             $result = Number::toWords($number);
             $result = str_replace(' and ', ' ', $result); // added this only for test data
+            $result = str_replace(', ', ' ', $result); // added this only for test data
+            // error_log("<$result>");
             if ($result !== $word) $this->assertTrue(false);
         }
         

@@ -20,17 +20,21 @@ class Word extends Model
         'sextillion' => 1000000000000000000000,
     ];
 
-    const NUMBERS = [
-        'zero' => 0,
-        'one' => 1,
-        'two' => 2,
-        'three' => 3,
+    const COMMONS = [
         'four' => 4,
         'five' => 5,
         'six' => 6,
         'seven' => 7,
         'eight' => 8,
         'nine' => 9,
+    ];
+    
+    const NUMBERS = [
+        'zero' => 0,
+        'one' => 1,
+        'two' => 2,
+        'three' => 3,
+        'five' => 5,
         'ten' => 10,
         'eleven' => 11,
         'twelve' => 12,
@@ -49,7 +53,7 @@ class Word extends Model
         'seventy' => 70,
         'eighty' => 80,
         'ninety' => 90,
-    ] + self::BASE_10;
+    ] + self::BASE_10 + self::COMMONS;
     
     public static function toNumber($input)
     {
@@ -57,14 +61,13 @@ class Word extends Model
         $number_words = self::NUMBERS;
         $and_space = str_replace(' and ', ' ', strtolower($input));
         $dash_space = str_replace('-', ' ', strtolower($and_space));
-        $cleaned = preg_replace('/[^A-Za-z0-9\ ]/', '', $dash_space); 
-        $words = explode(' ', strtolower($cleaned));
+        $cleaned = preg_replace('/[^A-Za-z0-9]/', '', $dash_space); 
+        $words = self::recognizeFuzzyWords($cleaned);
         $result = [0];
         $digits = 0;
         $digit_size = 0;
-
         foreach ($words as $word) {
-            if (!array_key_exists($word, $number_words)) return "Bad input: $cleaned";
+            if (!array_key_exists($word, $number_words)) return null;
             $number = $number_words[$word];
             if (array_key_exists($word, $base_10)) {
                 $digits *= $number;
@@ -85,7 +88,32 @@ class Word extends Model
         }
         array_push($result, $digits);
         return array_sum($result);
+    }
 
+    public static function recognizeFuzzyWords($string)
+    {
+        $letters = str_split(strtolower($string));
+        $word = '';
+        $recognized = [];
+        foreach ($letters as $index => $letter) {
+            $word .= $letter;
+            if (array_key_exists($word, self::NUMBERS)) {
+                if (array_key_exists($word, self::COMMONS)) {
+                    if ($word === 'eight') {
+                        $een = ($letters[$index+1] ?? '') . ($letters[$index+2] ?? '') . ($letters[$index+3] ?? '');
+                        $y = ($letters[$index+1] ?? '');
+                        if (($een === 'een') || ($y === 'y')) continue;
+                    } else {
+                        $teen = ($letters[$index+1] ?? '') . ($letters[$index+2] ?? '') . ($letters[$index+3] ?? '') . ($letters[$index+4] ?? '');
+                        $ty = ($letters[$index+1] ?? '') . ($letters[$index+2] ?? '');
+                        if (($teen === 'teen') || ($ty === 'ty')) continue; 
+                    }
+                }
+                array_push($recognized, $word);
+                $word = '';
+            } elseif ($word === 'and') $word = '';
+        }
+        return $recognized;
     }
 
 }

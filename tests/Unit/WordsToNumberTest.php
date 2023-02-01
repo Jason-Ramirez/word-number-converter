@@ -191,6 +191,8 @@ class WordsToNumberTest extends TestCase
 
         foreach ($data_set as $number => $word) {
             $result = Word::toNumber($word);
+            $result = str_replace(',', '', $result); // added this only for test data
+            $result = intval($result);
             if ($result !== $number) $this->assertTrue(false);
         }
 
